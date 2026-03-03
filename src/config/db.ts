@@ -9,8 +9,13 @@ setServers(["1.1.1.1", "8.8.8.8"]);
 
 
 const connectDB = async () => {
+  const url = process.env.DATABASE_URL;
+  if (!url) {
+    console.error("❌ DATABASE_URL is not defined in .env file!");
+    return;
+  }
   try {
-    await mongoose.connect(process.env.DATABASE_URL as string);
+    await mongoose.connect(url);
     console.log("MongoDB Connected Successfully! 🔥");
   } catch (error) {
     console.error("Connection Fail:", error);
