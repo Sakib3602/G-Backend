@@ -11,8 +11,7 @@ export interface IUser {
   job_title?: string | null;
   department?: string | null;
   hire_date?: Date | null;
-  NID? : string | null;
-
+  NID?: string | null;
 }
 
 const userSchema = new Schema(
@@ -28,11 +27,9 @@ const userSchema = new Schema(
     department: { type: String, default: null },
     hire_date: { type: Date, default: null },
     NID: { type: String, default: null },
-    
   },
-  {
-    versionKey: false,
-  },
+
+  { timestamps: true, versionKey: false },
 );
 
 export const User = model<IUser>("User", userSchema);

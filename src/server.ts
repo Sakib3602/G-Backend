@@ -12,6 +12,11 @@ const PORT = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
+app.use((req, _res, next) => {
+  console.log(`[${req.method}] ${req.originalUrl}`, req.body);
+  next();
+});
+
 // database connection
 connectDB();
 
