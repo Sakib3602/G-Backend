@@ -2,32 +2,33 @@ import { Schema, model } from "mongoose";
 
 export interface ILead {
   leadName: string;
-  email: string;
-  phone?: string;
-  profileUrl?: string;
-  CompanyName?: string;
-  Region?: string;
-  Title?: string;
-  SpecificRole?: string;
-  Owner: string;
-  Status: string;
-  Indications?: string;
-  LeadScore?: number;
+  owner: string;
+  status: string;              // e.g., 'New Lead', 'Contacted', etc.
+  indications?: string;        // optional
+  companyName?: string;        // optional
+  leadScore: number;           // converted to number from string
+  email?: string;              // optional
+  phone?: string;              // optional
+  title?: string;              // optional
+  specificRole?: string;       // optional
+  region?: string;             // optional
+  profileUrl?: string;         // optional
+  linkedin?: string;           // optional
 }
 
 const LeadSchema = new Schema<ILead>(
   {
     leadName: { type: String, required: true },
-    Owner: { type: String, required: true },
-    Status: { type: String, default: "New Lead" },
-    Indications: { type: String, default: "" },
-    CompanyName: { type: String, default: "" },
-    LeadScore: { type: Number, default: 1 },
+    owner: { type: String, required: true },
+    status: { type: String, default: "New Lead" },
+    indications: { type: String, default: "" },
+    companyName: { type: String, default: "" },
+    leadScore: { type: Number, default: 1 },
     email: { type: String, default: "" },
     phone: { type: String, default: "" },
-    Title: { type: String, default: "" },
-    SpecificRole: { type: String, default: "" },
-    Region: { type: String, default: "US" },
+    title: { type: String, default: "" },
+    specificRole: { type: String, default: "" },
+    region: { type: String, default: "US" },
     profileUrl: { type: String, default: "" },
   },
   { timestamps: true, versionKey: false },

@@ -3,6 +3,7 @@ import 'dotenv/config';
 import connectDB from './config/db.js'; 
 import cors from 'cors';
 import userRoutes from './routes/userRoutes.js';
+import leadRoutes from './routes/leadRoutes.js';
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -20,8 +21,12 @@ app.use((req, _res, next) => {
 // database connection
 connectDB();
 
-
+// user related routes
 app.use('/api/v1', userRoutes);
+
+
+// sales related routes
+app.use("/api/v1/sales", leadRoutes);
 
 // Basic ekta route check korar jonno
 app.get('/', (req, res) => {
