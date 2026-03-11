@@ -33,4 +33,4 @@ const LeadSchema = new Schema<ILead>(
   { timestamps: true, versionKey: false },
 );
 
-export const LeadModel = model<ILead>("Lead", LeadSchema);
+export const Lead = model<ILead>("Lead", LeadSchema);
