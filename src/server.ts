@@ -4,6 +4,7 @@ import connectDB from './config/db.js';
 import cors from 'cors';
 import userRoutes from './routes/userRoutes.js';
 import leadRoutes from './routes/Sales/leadRoutes.js';
+import meetingRoutes from './routes/Sales/meetingRoutes.js';
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -27,6 +28,9 @@ app.use('/api/v1', userRoutes);
 
 // sales related routes
 app.use("/api/v1/sales", leadRoutes);
+
+// meeting related routes for sales
+app.use("/api/v1/sales/meetings", meetingRoutes);
 
 // Basic ekta route check korar jonno
 app.get('/', (req, res) => {

@@ -12,6 +12,7 @@ export interface IMeeting {
   agenda?: string;
   notes?: string;
   status?: "scheduled" | "completed" | "cancelled";
+  schedulerId: string;
  
 }
 
@@ -69,6 +70,10 @@ const meetingSchema = new Schema<IMeeting>(
       type: String,
       enum: ["scheduled", "completed", "cancelled"],
       default: "scheduled",
+    },
+    schedulerId: {
+      type: String,
+      required: true,
     },
 
   },
