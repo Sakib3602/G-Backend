@@ -3,7 +3,7 @@ import 'dotenv/config';
 import connectDB from './config/db.js'; 
 import cors from 'cors';
 import userRoutes from './routes/userRoutes.js';
-import leadRoutes from './routes/leadRoutes.js';
+import leadRoutes from './routes/Sales/leadRoutes.js';
 
 const app = express();
 const PORT = process.env.PORT || 5000;
