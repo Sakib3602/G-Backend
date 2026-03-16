@@ -83,7 +83,7 @@ export const getAllMeetings = async (req: Request, res: Response) => {
 export const deletingMeeting = async (req: Request, res: Response) => {
   try {
     const  {id}  = req.params as { id: string };
-    console.log("Meeting ID:", id);
+    
 
     const meeting = await Meeting.findByIdAndDelete(id);
     res.status(200).json({ message: "Meeting deleted successfully", meeting });
@@ -93,3 +93,21 @@ export const deletingMeeting = async (req: Request, res: Response) => {
     res.status(500).json({ message: "Error deleting meeting" });
   }
 }
+
+
+export const updateMeetingStatus = async (req: Request, res: Response) => {
+  try{
+    const { id } = req.params as { id: string };
+    const { status } = req.body as { status: string };
+    const meeting = await Meeting.findByIdAndUpdate(id, { status }, { new: true });
+
+    if (!meeting) {
+      return res.status(404).json({ message: "Meeting not found" });
+    }
+    res.status(200).json({ message: "Meeting status updated successfully", meeting });
+  } catch (error) {
+    console.error("Error updating meeting status:", error);
+    res.status(500).json({ message: "Error updating meeting status" });
+  }
+}
+
