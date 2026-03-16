@@ -19,7 +19,10 @@ export const createLead = async (req: Request, res: Response) => {
 
 export const getMyLeads = async (req: Request, res: Response) => {
     try{
+        const  id  = req.params.id as string;
+        console.log("User ID from params:", id);
         const leads = await Lead.find({
+            leadCreatedBy: id,
             status: { $in: ["New Lead",  "Attempted to contact",'Contacted'] }
         });
         res.status(200).json({ message: "Leads retrieved successfully", leads });
