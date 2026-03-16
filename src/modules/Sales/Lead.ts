@@ -14,6 +14,7 @@ export interface ILead {
   region?: string;             // optional
   profileUrl?: string;         // optional
   linkedin?: string;           // optional
+  leadCreatedBy: string;        // user ID of the creator
 }
 
 const LeadSchema = new Schema<ILead>(
@@ -30,6 +31,7 @@ const LeadSchema = new Schema<ILead>(
     specificRole: { type: String, default: "" },
     region: { type: String, default: "US" },
     profileUrl: { type: String, default: "" },
+    leadCreatedBy: { type: String, required: true },
   },
   { timestamps: true, versionKey: false },
 );

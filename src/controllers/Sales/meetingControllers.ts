@@ -59,3 +59,21 @@ export const checkMeeting = async (req: Request, res: Response) => {
     });
   }
 };
+
+
+export const getAllMeetings = async (req: Request, res: Response) => {
+  try{
+
+    const id = req.params.id as string;
+    console.log("Scheduler ID:", id);
+    const meetings = await Meeting.find({ schedulerId: id });
+    console.log("Meetings:", meetings);
+    res.status(200).json({ message: "Meetings retrieved successfully", meetings });
+
+  } catch (error) {
+    console.error("Error retrieving meetings:", error);
+    res.status(500).json({ message: "Error retrieving meetings" });
+
+  }
+
+}
