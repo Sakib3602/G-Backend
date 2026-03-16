@@ -11,7 +11,7 @@ export interface IMeeting {
   meetingLink?: string;
   agenda?: string;
   notes?: string;
-  status?: "scheduled" | "completed" | "cancelled" | "one-more";
+  status?: "scheduled" | "completed" | "cancelled";
   schedulerId: string;
 }
 

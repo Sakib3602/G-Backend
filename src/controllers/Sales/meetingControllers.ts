@@ -64,12 +64,12 @@ export const checkMeeting = async (req: Request, res: Response) => {
 export const getAllMeetings = async (req: Request, res: Response) => {
   try {
     const id = req.params.id as string;
-    console.log("Scheduler ID:", id);
+    // console.log("Scheduler ID:", id);
     const meetings = await Meeting.find({ schedulerId: id }).sort({
       meetingDate: 1,
       meetingTime: 1,
     });
-    console.log("Meetings:", meetings);
+    // console.log("Meetings:", meetings);
     res
       .status(200)
       .json({ message: "Meetings retrieved successfully", meetings });
@@ -78,3 +78,18 @@ export const getAllMeetings = async (req: Request, res: Response) => {
     res.status(500).json({ message: "Error retrieving meetings" });
   }
 };
+
+
+export const deletingMeeting = async (req: Request, res: Response) => {
+  try {
+    const  {id}  = req.params as { id: string };
+    console.log("Meeting ID:", id);
+
+    const meeting = await Meeting.findByIdAndDelete(id);
+    res.status(200).json({ message: "Meeting deleted successfully", meeting });
+
+  } catch (error) {
+    console.error("Error deleting meeting:", error);
+    res.status(500).json({ message: "Error deleting meeting" });
+  }
+}
