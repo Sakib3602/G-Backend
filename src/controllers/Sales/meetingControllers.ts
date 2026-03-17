@@ -111,3 +111,19 @@ export const updateMeetingStatus = async (req: Request, res: Response) => {
   }
 }
 
+export const updateMeetingByID = async (req: Request, res: Response) => {
+  try{
+    const { id } = req.params as { id: string };
+    const updateData = req.body;
+    const meeting = await Meeting.findByIdAndUpdate(id, updateData, { new: true });
+
+    if (!meeting) {
+      return res.status(404).json({ message: "Meeting not found" });
+    }
+    res.status(200).json({ message: "Meeting updated successfully", meeting });
+  } catch (error) {
+    console.error("Error updating meeting:", error);
+    res.status(500).json({ message: "Error updating meeting" });
+
+  }
+}
