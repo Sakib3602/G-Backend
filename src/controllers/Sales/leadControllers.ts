@@ -32,6 +32,21 @@ export const getMyLeads = async (req: Request, res: Response) => {
     }
 }
 
+export const getInProgress= async (req: Request, res: Response) => {
+    try{
+        const  id  = req.params.id as string;
+        // console.log("User ID from params:", id);
+        const leads = await Lead.find({
+            leadCreatedBy: id,
+            status: { $in: ["In Progress"] }
+        });
+        res.status(200).json({ message: "Leads retrieved successfully", leads });
+    } catch (error) {
+        console.error("Error retrieving leads:", error);
+        res.status(500).json({ message: "Error retrieving leads" });
+    }
+}
+
 export const getContactedLeads = async(req: Request, res: Response) => {
     try{
         const leads = await Lead.find({
