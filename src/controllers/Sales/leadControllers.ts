@@ -78,3 +78,23 @@ export const updateLeadStatus = async (req: Request, res: Response) => {
 
     }
 }
+
+
+export const ProposalSent = async(req: Request, res: Response) => {
+    try{
+        const { leadId } = req.params as { leadId: string };
+
+        console.log("Marking proposal sent for lead ID:", leadId);
+
+        const lead = await Lead.findByIdAndUpdate(leadId, { proposalSent: true }, { new: true });
+
+        if (!lead) {
+            return res.status(404).json({ message: "Lead not found" });
+        }
+
+        res.status(200).json({ message: "Proposal status updated successfully", lead });
+    } catch (error) {
+        console.error("Error updating proposal status:", error);
+        res.status(500).json({ message: "Error updating proposal status" });
+    }
+}
