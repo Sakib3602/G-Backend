@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { createLead, getContactedLeads, getMyLeads, updateLeadStatus,getInProgress, ProposalSent, getReminders, UpdateAtTimeChange } from "../../controllers/Sales/leadControllers.js";
+import { createLead, getContactedLeads, getMyLeads, updateLeadStatus,getInProgress, ProposalSent, getReminders, UpdateAtTimeChange, DashboardData } from "../../controllers/Sales/leadControllers.js";
 
 
 
@@ -15,6 +15,7 @@ router.put("/update-lead-status/:leadId", updateLeadStatus);
 router.put("/mark-proposal-sent/:leadId", ProposalSent);
 router.get('/rem/:leadId', getReminders);
 router.put("/update-at-time/:leadId", UpdateAtTimeChange);
+router.get('/dashboard/:userId', DashboardData);
 
 
 export default router;

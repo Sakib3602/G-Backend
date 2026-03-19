@@ -84,7 +84,6 @@ export const ProposalSent = async(req: Request, res: Response) => {
     try{
         const { leadId } = req.params as { leadId: string };
 
-        console.log("Marking proposal sent for lead ID:", leadId);
 
         const lead = await Lead.findByIdAndUpdate(leadId, { proposalSent: true }, { new: true });
 
@@ -139,6 +138,54 @@ export const UpdateAtTimeChange = async(req: Request, res: Response) => {
         console.error("Error updating lead:", error);
         res.status(500).json({ message: "Error updating lead" });
 
+    }
+}
+
+
+
+export const DashboardData = async(req: Request, res: Response) => {
+    try{
+        const { userId } = req.params as { userId: string };
+        const totalLeads = await Lead.countDocuments({ leadCreatedBy: userId });
+        const newLeads = await Lead.countDocuments({ leadCreatedBy: userId, status: "New Lead" });
+        const inProgressLeads = await Lead.countDocuments({ leadCreatedBy: userId, status: "In Progress" });
+        const contactedLeads = await Lead.countDocuments({ leadCreatedBy: userId, status: "Contacted" });
+        const qualifiedLeads = await Lead.countDocuments({ leadCreatedBy: userId, status: "Qualified" });
+        const unqualifiedLeads = await Lead.countDocuments({ leadCreatedBy: userId, status: "Unqualified" });
+
+         const MinutesAgo = new Date(Date.now() - 2 * 60 * 1000);
+        // const threeDaysAgo = new Date();
+        // threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
+
+        const reminders = await Lead.find({        
+            leadCreatedBy: userId,
+            proposalSent: true,
+            status: { $nin: ["Qualified", "Unqualified"] },
+            updatedAt: { $lte: MinutesAgo }
+        }).countDocuments();
+
+        const ActionRequiredCount = await Lead.countDocuments({ leadCreatedBy: userId, proposalSent: false ,status: "In Progress"});
+        const AwaitResponseCount = await Lead.countDocuments({ leadCreatedBy: userId, proposalSent: true, status: "In Progress"  });
+
+        // Win Rate (%) = (Qualified / Total Leads) * 100
+        const winRate = totalLeads > 0 ? (qualifiedLeads / totalLeads) * 100 : 0;
+
+        res.status(200).json({
+            totalLeads,
+            newLeads,
+            inProgressLeads,
+            contactedLeads,
+            qualifiedLeads,
+            unqualifiedLeads,
+            reminders,
+            ActionRequiredCount,
+            AwaitResponseCount,
+            winRate: winRate.toFixed(2) // Round to 2 decimal places
+        });
+    }
+        catch (error) {
+        console.error("Error retrieving dashboard data:", error);
+        res.status(500).json({ message: "Error retrieving dashboard data" });
     }
 }
 
