@@ -98,3 +98,47 @@ export const ProposalSent = async(req: Request, res: Response) => {
         res.status(500).json({ message: "Error updating proposal status" });
     }
 }
+
+// 2 min use korsi
+export const getReminders = async(req: Request, res: Response) => {
+    try{
+        const { leadId } = req.params as { leadId: string };
+        const MinutesAgo = new Date(Date.now() - 2 * 60 * 1000);
+        // const threeDaysAgo = new Date();
+        // threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
+
+        const reminders = await Lead.find({        
+            leadCreatedBy: leadId,
+            proposalSent: true,
+            status: { $nin: ["Qualified", "Unqualified"] },
+            updatedAt: { $lte: MinutesAgo }
+        });
+        console.log("Reminders found:", reminders);
+         res.status(200).json({
+        data: reminders
+});
+
+
+    } catch (error) {
+        console.error("Error retrieving reminders:", error);
+        res.status(500).json({ message: "Error retrieving reminders" });
+    }
+}
+
+
+export const UpdateAtTimeChange = async(req: Request, res: Response) => {
+    try{
+        const { leadId } = req.params as { leadId: string };
+        const lead = await Lead.findByIdAndUpdate(leadId, { updatedAt: new Date() }, { new: true });
+
+        if (!lead) {
+            return res.status(404).json({ message: "Lead not found" });
+        }
+        res.status(200).json({ message: "Lead updated successfully", lead });
+    } catch (error) {
+        console.error("Error updating lead:", error);
+        res.status(500).json({ message: "Error updating lead" });
+
+    }
+}
+

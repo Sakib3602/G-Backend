@@ -16,6 +16,7 @@ export interface ILead {
   linkedin?: string;           // optional
   leadCreatedBy: string;        // user ID of the creator
   proposalSent?: boolean;        // optional, default to false
+  
 }
 
 const LeadSchema = new Schema<ILead>(
