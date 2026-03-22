@@ -1,8 +1,8 @@
 import { Router } from "express";
-import { sendLeadEmail } from "../../controllers/Sales/emailService/emailServiceControler.js";
+import { sendLeadProposalEmail, sendRemainderEmail } from "../../controllers/Sales/emailService/emailServiceControler.js";
 
 
 const router = Router();
-router.post("/send-proposal-email", sendLeadEmail);
-
+router.post("/send-proposal-email", sendLeadProposalEmail);
+router.post("/send-reminder-email/:email", sendRemainderEmail);
 export default router;

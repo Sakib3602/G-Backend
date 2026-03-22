@@ -15,8 +15,6 @@ export const createLead = async (req: Request, res: Response) => {
     }
 }
 
-
-
 export const getMyLeads = async (req: Request, res: Response) => {
     try{
         const  id  = req.params.id as string;
@@ -49,8 +47,40 @@ export const getInProgress= async (req: Request, res: Response) => {
 
 export const getContactedLeads = async(req: Request, res: Response) => {
     try{
+        const { id } = req.params as { id: string };
+      
         const leads = await Lead.find({
+            leadCreatedBy: id,
             status: 'Contacted'
+        });
+        res.status(200).json({ message: "Leads retrieved successfully", leads });
+    } catch (error) {
+        console.error("Error retrieving leads:", error);
+        res.status(500).json({ message: "Error retrieving leads" });
+    }
+}
+export const getQualifiedLeads = async(req: Request, res: Response) => {
+    try{
+        const { id } = req.params as { id: string };
+
+        // console.log(id,"ppppppppppp")
+        const leads = await Lead.find({
+            leadCreatedBy: id,
+            status: 'Qualified'
+        });
+        
+        res.status(200).json({ message: "Leads retrieved successfully", leads });
+    } catch (error) {
+        console.error("Error retrieving leads:", error);
+        res.status(500).json({ message: "Error retrieving leads" });
+    }
+}
+export const getUnqualifiedLeads = async(req: Request, res: Response) => {
+    try{
+        const { id } = req.params as { id: string };
+        const leads = await Lead.find({
+            leadCreatedBy: id,
+            status: 'Unqualified'
         });
         res.status(200).json({ message: "Leads retrieved successfully", leads });
     } catch (error) {
