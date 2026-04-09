@@ -1,5 +1,6 @@
 import type { Request, Response } from "express";
 import { Lead } from "../../modules/Sales/Lead.js";
+import { Qualified } from "../../modules/Marketing/qualified.js";
 
 
 
@@ -62,12 +63,14 @@ export const getContactedLeads = async(req: Request, res: Response) => {
 export const getQualifiedLeads = async(req: Request, res: Response) => {
     try{
         const { id } = req.params as { id: string };
-
-        // console.log(id,"ppppppppppp")
+     
         const leads = await Lead.find({
             leadCreatedBy: id,
             status: 'Qualified'
         });
+    
+    
+        
         
         res.status(200).json({ message: "Leads retrieved successfully", leads });
     } catch (error) {
@@ -94,11 +97,24 @@ export const updateLeadStatus = async (req: Request, res: Response) => {
     try {
         const { leadId } = req.params as { leadId: string };
         const { status } = req.body as { status: string };
+        const { dealDocLink } = req.body as { dealDocLink: string };
+
+        console.log("Updating lead status:", { leadId, status });
 
         const lead = await Lead.findByIdAndUpdate(leadId, { status }, { new: true });
+        console.log("Updated lead:", lead);
 
         if (!lead) {
             return res.status(404).json({ message: "Lead not found" });
+        }
+
+        if (status === "Qualified") {
+            await Qualified.create({
+                leadId: lead._id,
+                signature: false,
+                createdBy: lead.leadCreatedBy,
+                dealFinalLink: dealDocLink
+            });
         }
 
         res.status(200).json({ message: "Lead status updated successfully", lead });

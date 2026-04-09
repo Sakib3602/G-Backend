@@ -16,6 +16,7 @@ export interface ILead {
   linkedin?: string;           // optional
   leadCreatedBy: string;        // user ID of the creator
   proposalSent?: boolean;        // optional, default to false
+  ServiceNeed? : string;   // optional, added for service needs
   
 }
 
@@ -35,6 +36,9 @@ const LeadSchema = new Schema<ILead>(
     profileUrl: { type: String, default: "" },
     leadCreatedBy: { type: String, required: true },
     proposalSent: { type: Boolean, default: false },
+    ServiceNeed: { type: String,
+       enum : ["Graphic","Web","Marketing"],
+       default: "Graphic" },  // default to "Graphic" if not provided
   },
   { timestamps: true, versionKey: false },
 );
