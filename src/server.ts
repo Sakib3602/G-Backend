@@ -39,7 +39,7 @@ app.use("/api/v1/sales/emailservice", emailService)
 
 // -----------------marketing related routes------------------------
 // qualified lead related routes
-app.use("/api/v1/marketing", qualifiedRoutes);
+app.use("/api/v1/marketing", qualifiedRoutes);  // ei route er kaj korsi lead status jokhn qualified hoy tkhn create korsi.
 // -----------------marketing related routes end------------------------
 
 

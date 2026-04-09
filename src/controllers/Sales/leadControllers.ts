@@ -1,6 +1,7 @@
 import type { Request, Response } from "express";
 import { Lead } from "../../modules/Sales/Lead.js";
 import { Qualified } from "../../modules/Marketing/qualified.js";
+import { User } from "../../modules/User.js";
 
 
 
@@ -93,31 +94,90 @@ export const getUnqualifiedLeads = async(req: Request, res: Response) => {
 }
 
 
+
 export const updateLeadStatus = async (req: Request, res: Response) => {
     try {
         const { leadId } = req.params as { leadId: string };
         const { status } = req.body as { status: string };
         const { dealDocLink } = req.body as { dealDocLink: string };
 
-        console.log("Updating lead status:", { leadId, status });
+        const statusText = String(status ?? "").trim(); 
+        if (!statusText) {
+            return res.status(400).json({ message: "Status is required" });
+        }
 
-        const lead = await Lead.findByIdAndUpdate(leadId, { status }, { new: true });
-        console.log("Updated lead:", lead);
+        const statusMap: Record<string, string> = {
+            "new lead": "New Lead",
+            "attempted to contact": "Attempted to contact",
+            "contacted": "Contacted",
+            "in progress": "In Progress",
+            "qualified": "Qualified",
+            "unqualified": "Unqualified"
+        };
+        const normalizedStatus = statusMap[statusText.toLowerCase()] ?? statusText;
+        const dealDocLinkText = String(dealDocLink ?? "").trim();
 
+      
+
+        const lead = await Lead.findById(leadId);
         if (!lead) {
             return res.status(404).json({ message: "Lead not found" });
         }
 
-        if (status === "Qualified") {
-            await Qualified.create({
-                leadId: lead._id,
-                signature: false,
-                createdBy: lead.leadCreatedBy,
-                dealFinalLink: dealDocLink
-            });
+        const updatePayload: { status: string; assignedToMarketer?: string } = { status: normalizedStatus };
+
+        if (normalizedStatus === "Qualified") {
+            if (!dealDocLinkText) {
+                return res.status(400).json({ message: "dealDocLink is required when status is Qualified" });
+            }
+
+            // 1. Get all marketers
+        const marketers = await User.find({ role: { $regex: /^(marketer|marketing)$/i } });
+
+        if (!marketers.length) {
+            return res.status(400).json({ message: "No marketer found to assign this lead" });
         }
 
-        res.status(200).json({ message: "Lead status updated successfully", lead });
+        let selectedMarketer = null;
+        let minCount = Infinity;
+
+
+        // 2. Loop each marketer
+        for (const marketer of marketers) {
+
+            // count how many leads assigned to this marketer
+            const count = await Lead.countDocuments({
+            assignedToMarketer: String(marketer._id),
+            status: "Qualified"
+            });
+
+            // 3. find minimum
+            if (count < minCount) {
+            minCount = count;
+            selectedMarketer = marketer;
+            }
+        }
+
+        updatePayload.assignedToMarketer = String(selectedMarketer?._id ?? "");
+
+       
+        }
+
+        const updatedLead = await Lead.findByIdAndUpdate(leadId, updatePayload, { new: true });
+
+        if (normalizedStatus === "Qualified") {
+            await Qualified.findOneAndUpdate(
+                { leadId: lead._id },
+                {
+                    signature: false,
+                    createdBy: lead.leadCreatedBy,
+                    dealFinalLink: dealDocLinkText
+                },
+                { upsert: true, new: true, setDefaultsOnInsert: true }
+            );
+        }
+
+        res.status(200).json({ message: "Lead status updated successfully", lead: updatedLead });
     } catch (error) {
         console.error("Error updating lead status:", error);
         res.status(500).json({ message: "Error updating lead status" });
