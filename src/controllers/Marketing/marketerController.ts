@@ -49,7 +49,7 @@ export const remainderToSign = async (req: Request, res: Response) => {
     try{
         const {id} = req.params as {id: string}; // eita ashbo marketer er id
         console.log("Retrieving remainder leads for marketer ID:", id);
-            const minutesAgo = new Date(Date.now() - 2 * 60 * 1000); // 2 minute age er time ber korlam
+            const minutesAgo = new Date(Date.now() -  1 * 60 * 1000); // 1 minute age er time ber korlam
 
          const qualifiedRemainder = await Qualified.find({
             assignedToMarketer: id,
@@ -77,12 +77,12 @@ export const UpdateAtTimeChangeMarketing = async(req: Request, res: Response) =>
             }, // filter
             { updatedAt: new Date() }, // update
             { returnDocument: "after" }
-        );
+        )
         console.log("Updated document:", up);
         if (!up) {
             return res.status(404).json({ message: "up not found" });
         }
-        res.status(200).json({ message: "up updated successfully", up });
+        res.status(200).json({ message: "up updated successfully" });
     } catch (error) {
         console.error("Error updating up:", error);
         res.status(500).json({ message: "Error updating up" });

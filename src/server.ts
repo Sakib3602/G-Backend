@@ -6,6 +6,7 @@ import userRoutes from './routes/userRoutes.js';
 import leadRoutes from './routes/Sales/leadRoutes.js';
 import meetingRoutes from './routes/Sales/meetingRoutes.js';
 import emailService from './routes/Sales/emailService.js';
+import emailServiceMarketer from './routes/Marketer/emailServiceMarketer.js'
 import qualifiedRoutes from "./routes/Marketer/qualifiedRoutes.js"
 
 const app = express();
@@ -31,9 +32,6 @@ app.use("/api/v1/sales", leadRoutes);
 // meeting related routes for sales
 app.use("/api/v1/sales/meetings", meetingRoutes);
 
-// email service routes
-// ---------------Sales------------------
-app.use("/api/v1/sales/emailservice", emailService)
 // ---------------End------------------
 
 
@@ -42,6 +40,16 @@ app.use("/api/v1/sales/emailservice", emailService)
 app.use("/api/v1/marketing", qualifiedRoutes);  // ei route er kaj korsi lead status jokhn qualified hoy tkhn create korsi.
 // -----------------marketing related routes end------------------------
 
+
+
+
+
+
+// email service routes
+// ---------------Sales------------------
+app.use("/api/v1/sales/emailservice", emailService);
+// --------------Marketing------------------
+app.use("/api/v1/marketing/emailservice", emailServiceMarketer);  
 
 
 
