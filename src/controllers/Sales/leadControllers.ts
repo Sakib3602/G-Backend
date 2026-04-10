@@ -95,6 +95,8 @@ export const getUnqualifiedLeads = async(req: Request, res: Response) => {
 
 
 
+
+// udate status and assign marketer if qualified
 export const updateLeadStatus = async (req: Request, res: Response) => {
     try {
         const { leadId } = req.params as { leadId: string };
@@ -171,7 +173,8 @@ export const updateLeadStatus = async (req: Request, res: Response) => {
                 {
                     signature: false,
                     createdBy: lead.leadCreatedBy,
-                    dealFinalLink: dealDocLinkText
+                    dealFinalLink: dealDocLinkText,
+                    assignedToMarketer: updatePayload.assignedToMarketer ?? ""
                 },
                 { upsert: true, new: true, setDefaultsOnInsert: true }
             );
