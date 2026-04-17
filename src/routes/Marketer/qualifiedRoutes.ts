@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { createQualified, getQualifiedLeadsMarker, remainderToSign, UpdateAtTimeChangeMarketing, updateSignatureStatus } from "../../controllers/Marketing/marketerController.js";
+import { createQualified, getAllOnBoardingLeads, getQualifiedLeadsMarker, remainderToSign, UpdateAtTimeChangeMarketing, updateSignatureStatus } from "../../controllers/Marketing/marketerController.js";
 
 const router = Router();
 
@@ -8,6 +8,6 @@ router.get("/qualified-leads/:id", getQualifiedLeadsMarker);
 router.put("/update-signature/:id", updateSignatureStatus);
 router.get("/remainder-to-sign/:id", remainderToSign);
 router.put("/updateTime-Marketing/:id", UpdateAtTimeChangeMarketing);
-
+router.get("/all-onboarding-leads/:id", getAllOnBoardingLeads);
 
 export default router;

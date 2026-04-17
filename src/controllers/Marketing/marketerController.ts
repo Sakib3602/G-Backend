@@ -48,8 +48,7 @@ export const updateSignatureStatus = async (req: Request, res: Response) => {
 export const remainderToSign = async (req: Request, res: Response) => {
     try{
         const {id} = req.params as {id: string}; // eita ashbo marketer er id
-        console.log("Retrieving remainder leads for marketer ID:", id);
-            const minutesAgo = new Date(Date.now() -  1 * 60 * 1000); // 1 minute age er time ber korlam
+        const minutesAgo = new Date(Date.now() -  1 * 60 * 1000); // 1 minute age er time ber korlam
 
          const qualifiedRemainder = await Qualified.find({
             assignedToMarketer: id,
@@ -68,8 +67,7 @@ export const remainderToSign = async (req: Request, res: Response) => {
 
 export const UpdateAtTimeChangeMarketing = async(req: Request, res: Response) => {
     try{
-        const { id } = req.params as { id: string };
-        console.log("Updating updatedAt for marketer ID:", id);
+       const { id } = req.params as { id: string };
        const up = await Qualified.findOneAndUpdate(
             { 
                 _id: id,
@@ -78,7 +76,7 @@ export const UpdateAtTimeChangeMarketing = async(req: Request, res: Response) =>
             { updatedAt: new Date() }, // update
             { returnDocument: "after" }
         )
-        console.log("Updated document:", up);
+      
         if (!up) {
             return res.status(404).json({ message: "up not found" });
         }
@@ -90,4 +88,16 @@ export const UpdateAtTimeChangeMarketing = async(req: Request, res: Response) =>
     }
 }
 
+
+export const getAllOnBoardingLeads = async(req: Request, res: Response) => {
+    try{
+        const {id} = req.params as {id: string};  // marketer er id ashbo
+        const allOnBoardingLeads = await Qualified.find({assignedToMarketer: id , signature : true}).populate("createdBy", "name").populate("leadId", "leadName ServiceNeed region email phone");
+        res.status(200).json(allOnBoardingLeads);
+    }
+    catch (error) {
+        console.error("Error retrieving onboarding leads:", error);
+        res.status(500).json({ message: "Error retrieving onboarding leads" });
+    }
+}
 
