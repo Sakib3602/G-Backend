@@ -10,6 +10,7 @@ export interface CampaignData{
     totalBudget: number,
     adminApproval?: "pending" | "approved" | "rejected", 
     marketerId: Types.ObjectId,
+    revenue?: number,
 }
 
 const CampaignSchema = new Schema<CampaignData>({
@@ -21,7 +22,8 @@ const CampaignSchema = new Schema<CampaignData>({
     targetLeads: { type: Number, required: true },
     totalBudget: { type: Number, required: true },
     adminApproval: { type: String, default: "pending", enum: ["pending", "approved", "rejected"] }, 
-    marketerId: { type: Schema.Types.ObjectId, ref: "User", required: true }
+    marketerId: { type: Schema.Types.ObjectId, ref: "User", required: true },
+    revenue: { type: Number, default: 0 },
 }
 ,{ timestamps: true, versionKey: false },
 )

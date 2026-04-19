@@ -9,6 +9,7 @@ import emailService from './routes/Sales/emailService.js';
 import emailServiceMarketer from './routes/Marketer/emailServiceMarketer.js'
 import qualifiedRoutes from "./routes/Marketer/qualifiedRoutes.js"
 import campaignRoutes from "./routes/Marketer/campaign.js"
+import taskRoutes from "./routes/Marketer/tasksRoutes.js"
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -40,6 +41,7 @@ app.use("/api/v1/sales/meetings", meetingRoutes);
 // qualified lead related routes
 app.use("/api/v1/marketing", qualifiedRoutes);  // ei route er kaj korsi lead status jokhn qualified hoy tkhn create korsi.
 app.use("/api/v1/marketing/campaigns", campaignRoutes);  
+app.use("/api/v1/marketing/tasks", taskRoutes);  // ei route er kaj hobe marketer er task gula dekhano mane je campaign gula ase tkhn seita dekhabe.
 
 // -----------------marketing related routes end------------------------
 
