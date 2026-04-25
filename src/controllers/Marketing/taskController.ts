@@ -1,7 +1,36 @@
 import type { Request, Response } from "express";
 import { Campaign } from "../../modules/Marketing/campaign.js";
 import { User } from "../../modules/User.js";
+import { MarketingTask } from "../../modules/Marketing/tasks.js"
 
+const getRemainingDate = (dueDateValue: Date, dueTime: string) => {
+    const now = new Date();
+    const dueDate = new Date(dueDateValue);
+
+    const parsedHours = Number(dueTime?.split(":")[0]);
+    const parsedMinutes = Number(dueTime?.split(":")[1]);
+
+    const hours = Number.isInteger(parsedHours) ? parsedHours : 23;
+    const minutes = Number.isInteger(parsedMinutes) ? parsedMinutes : 59;
+
+    dueDate.setHours(hours, minutes, 0, 0);
+
+    const diffMs = dueDate.getTime() - now.getTime();
+    const absMs = Math.abs(diffMs);
+
+    const dayMs = 24 * 60 * 60 * 1000;
+    const hourMs = 60 * 60 * 1000;
+    const minuteMs = 60 * 1000;
+
+    return {
+        dueDateTime: dueDate,
+        isOverdue: diffMs < 0,
+        milliseconds: diffMs,
+        days: Math.floor(absMs / dayMs),
+        hours: Math.floor((absMs % dayMs) / hourMs),
+        minutes: Math.floor((absMs % hourMs) / minuteMs)
+    };
+};
 
 export const getAllCampaignsForMarketerForAddTask = async (req: Request, res: Response) => {
     try{
@@ -27,5 +56,45 @@ export const getAllEmployeesForAddTask = async (req: Request, res: Response) => 
         res.status(200).json(employee);
     } catch (error) {
         res.status(500).json({ message: "Error fetching employees", error });
+    }
+}
+
+export const getAllTasks = async (req: Request, res: Response) => {
+    try {
+        const { marketerId } = req.params as { marketerId: string };
+        const data = await MarketingTask.find({ makerId : marketerId })
+            .populate("makerId", "name")
+            .populate("campaignId", "campaignName")
+            .populate("assignedTo", "name");
+
+        const tasksWithRemainingDate = data.map((task) => {
+            const remainingDate = getRemainingDate(task.dueDate, task.dueTime);
+            return {
+                ...task.toObject(),
+                remainingDate
+            };
+        });
+
+        res.status(200).json(tasksWithRemainingDate);
+    } catch (error) {
+        res.status(500).json({ message: "Error fetching tasks", error });
+    }
+}
+
+
+export const createTask = async (req: Request, res: Response) => {
+    try{
+
+        const body = req.body;
+        const task = await MarketingTask.create(body);
+        const remainingDate = getRemainingDate(task.dueDate, task.dueTime);
+
+        res.status(201).json({
+            ...task.toObject(),
+            remainingDate
+        });
+        
+    } catch (error) {
+        res.status(500).json({ message: "Error creating task", error });
     }
 }
