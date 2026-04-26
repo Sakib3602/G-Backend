@@ -28,7 +28,8 @@ const getRemainingDate = (dueDateValue: Date, dueTime: string) => {
         milliseconds: diffMs,
         days: Math.floor(absMs / dayMs),
         hours: Math.floor((absMs % dayMs) / hourMs),
-        minutes: Math.floor((absMs % hourMs) / minuteMs)
+        minutes: Math.floor((absMs % hourMs) / minuteMs),
+        dueTimeWithDayAndHour: `${Math.floor(absMs / dayMs)} day ${Math.floor((absMs % dayMs) / hourMs)} hour`
     };
 };
 
@@ -62,10 +63,10 @@ export const getAllEmployeesForAddTask = async (req: Request, res: Response) => 
 export const getAllTasks = async (req: Request, res: Response) => {
     try {
         const { marketerId } = req.params as { marketerId: string };
-        const data = await MarketingTask.find({ makerId : marketerId })
+        const data = await MarketingTask.find({ makerId : marketerId , status : {$ne: "completed"}})
             .populate("makerId", "name")
             .populate("campaignId", "campaignName")
-            .populate("assignedTo", "name");
+            .populate("assignedTo", "name email");
 
         const tasksWithRemainingDate = data.map((task) => {
             const remainingDate = getRemainingDate(task.dueDate, task.dueTime);
