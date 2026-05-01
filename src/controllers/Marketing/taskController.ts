@@ -99,3 +99,21 @@ export const createTask = async (req: Request, res: Response) => {
         res.status(500).json({ message: "Error creating task", error });
     }
 }
+
+
+
+
+// ============================Designer Tasks ============================
+export const DesignerTasks = async (req: Request, res: Response) => {
+    try{
+        const { designerId } = req.params as { designerId: string };
+        console.log("Designer ID:", designerId); // Debug log to check the received designerId
+        const data = await MarketingTask.find({ assignedTo : designerId , status : {$ne: ["completed", "in-progress"]}})
+            .populate("makerId", "name")
+            .populate("campaignId", "campaignName")
+        console.log("Fetched Tasks:", data); // Debug log to check the fetched tasks
+        res.status(200).json(data);
+    } catch (error) {
+        res.status(500).json({ message: "Error fetching designer tasks", error });
+    }
+}
